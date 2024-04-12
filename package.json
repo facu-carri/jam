@@ -16,7 +16,7 @@
 	"format": "prettier --write src",
 	"format:check": "prettier --check src",
 	"types": "tsc",
-  "dev": "vite"
+	"dev": "vite"
 },
   
   "dependencies": {

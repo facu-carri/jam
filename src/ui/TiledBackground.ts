@@ -21,6 +21,11 @@ export class TiledBackground extends Container {
         this.sprite.tileTransform.rotation = this.direction;
         this.addChild(this.sprite);
 
+		setInterval( ()=>{
+			this.direction = Math.random() * -Math.PI * 2
+			this.sprite.tileTransform.rotation = this.direction;
+		}, 3000)
+
         this.onRender = () => this.renderUpdate();
     }
 
