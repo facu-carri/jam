@@ -16,6 +16,7 @@ const defaultMatch3PieceOptions = {
     highlight: false,
     /** Enable or disable its interactivity */
     interactive: false,
+    blocked: true
 };
 
 /** Piece configuration parameters */
@@ -57,6 +58,7 @@ export class Match3Tile extends Container {
     public type = 0;
     /** The name of the piece - must match one of the available textures */
     public name = '';
+    private blocked = true
     /** Callback that fires when the player drags the piece for a move */
     public onMove?: (from: Match3Position, to: Match3Position) => void;
     /** Callback that fires when the player tap the piece */
@@ -97,20 +99,18 @@ export class Match3Tile extends Container {
         this.dragging = false;
         this.visible = true;
         this.alpha = 1;
+        this.blocked = opts.blocked
         this.type = opts.type;
-        this.image.alpha = 1;
         this.scale.set(1);
-        this.image.texture = Texture.from(opts.name);
-        this.image.width = opts.size - (opts.highlight ? 2 : 8);
-        this.image.height = this.image.width;
         this.highlight.visible = opts.highlight;
         this.highlight.width = opts.size;
         this.highlight.height = opts.size;
         this.highlight.alpha = 0.3;
+        this.area.tint = 'red'
         this.area.width = opts.size;
         this.area.height = opts.size;
         this.area.interactive = opts.interactive;
-        this.area.cursor = 'pointer';
+        this.area.cursor = opts.blocked ? 'cursor' : 'pointer';
         this.unlock();
     }
 

@@ -35,6 +35,8 @@ const defaultConfig = {
     duration: 60,
     /** Gameplay mode - affects the number of piece types in the grid */
     mode: <Match3Mode>'normal',
+    playerRows: 4,
+    playerColumns: 7
 };
 
 /** Match3 configuration */

@@ -157,12 +157,12 @@ export class Match3Process {
         for (const change of changes) {
             const from = change[0];
             const to = change[1];
-            const piece = this.match3.board.getPieceByPosition(from);
-            if (!piece) continue;
-            piece.row = to.row;
-            piece.column = to.column;
+            const tile = this.match3.board.getTileByPosition(from);
+            if (!tile) continue;
+            tile.row = to.row;
+            tile.column = to.column;
             const newPosition = this.match3.board.getViewPositionByGridPosition(to);
-            animPromises.push(piece.animateFall(newPosition.x, newPosition.y));
+            animPromises.push(tile.animateFall(newPosition.x, newPosition.y));
         }
 
         await Promise.all(animPromises);

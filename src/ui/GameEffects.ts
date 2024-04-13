@@ -176,7 +176,7 @@ export class GameEffects extends Container {
         this.game.match3.board.tiles.forEach((tile) => {
             animPromises.push(this.playPieceExplosion(tile));
         });
-        this.game.match3.board.piecesContainer.visible = false;
+        this.game.match3.board.tilesContainer.visible = false;
         await Promise.all(animPromises);
     }
 }

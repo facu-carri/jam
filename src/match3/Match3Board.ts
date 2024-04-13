@@ -13,6 +13,11 @@ import {
     Match3Type,
 } from './Match3Utility';
 
+type playerArea = {
+    rows: number,
+    columns: number
+}
+
 /**
  * Holds the grid state and control its visual representation, creating and removing pieces accordingly.
  * As a convention for this game, 'grid' is usually referring to the match3 state (array of types),
@@ -28,7 +33,7 @@ export class Match3Board {
     /** Mask all pieces inside board dimensions */
     public piecesMask: Graphics;
     /** A container for the pieces sprites */
-    public piecesContainer: Container;
+    public tilesContainer: Container;
     /** Number of rows in the boaard */
     public rows = 0;
     /** Number of columns in the boaard */
@@ -40,15 +45,20 @@ export class Match3Board {
     /** Map piece types to piece names */
     public typesMap!: Record<number, string>;
 
+    public playerArea: playerArea = {
+        columns: this.columns,
+        rows: this.rows
+    }
+
     constructor(match3: Match3) {
         this.match3 = match3;
 
-        this.piecesContainer = new Container();
-        this.match3.addChild(this.piecesContainer);
+        this.tilesContainer = new Container();
+        this.match3.addChild(this.tilesContainer);
 
         this.piecesMask = new Graphics().rect(-2, -2, 4, 4).fill({ color: 0xff0000, alpha: 0.5 });
         this.match3.addChild(this.piecesMask);
-        this.piecesContainer.mask = this.piecesMask;
+        this.tilesContainer.mask = this.piecesMask;
     }
 
     /**
@@ -61,8 +71,9 @@ export class Match3Board {
         this.tileSize = config.tileSize;
         this.piecesMask.width = this.getWidth();
         this.piecesMask.height = this.getHeight();
-        this.piecesContainer.visible = true;
-
+        this.tilesContainer.visible = true;
+        this.playerArea.columns = config.playerColumns
+        this.playerArea.rows = config.playerRows
         // The list of blocks (including specials) that will be used in the game
         const blocks = match3GetBlocks(config.mode);
 
@@ -111,24 +122,27 @@ export class Match3Board {
      */
     public createTile(position: Match3Position, pieceType: Match3Type) {
         const name = this.typesMap[pieceType];
-        const piece = pool.get(Match3Tile);
+        const tile = pool.get(Match3Tile);
         const viewPosition = this.getViewPositionByGridPosition(position);
-        piece.onMove = (from, to) => this.match3.actions.actionMove(from, to);
-        piece.onTap = (position) => this.match3.actions.actionTap(position);
-        piece.setup({
+        const blocked = position.column > this.playerArea.columns || position.row > this.playerArea.rows
+
+        tile.onMove = (from, to) => this.match3.actions.actionMove(from, to);
+        tile.onTap = (position) => this.match3.actions.actionTap(position);
+        tile.setup({
             name,
             type: pieceType,
             size: this.match3.config.tileSize,
             interactive: true,
             highlight: this.match3.special.isSpecial(pieceType),
+            blocked: blocked
         });
-        piece.row = position.row;
-        piece.column = position.column;
-        piece.x = viewPosition.x;
-        piece.y = viewPosition.y;
+        tile.row = position.row;
+        tile.column = position.column;
+        tile.x = viewPosition.x;
+        tile.y = viewPosition.y;
         //this.pieces.push(piece);
-        this.piecesContainer.addChild(piece);
-        return piece;
+        this.tilesContainer.addChild(tile);
+        return tile;
     }
 
     /**
@@ -151,8 +165,8 @@ export class Match3Board {
      * @param pieceType The type of the piece to be spawned
      */
     public async spawnPiece(position: Match3Position, pieceType: Match3Type) {
-        const oldPiece = this.getPieceByPosition(position);
-        if (oldPiece) this.disposePiece(oldPiece);
+        const oldTile = this.getTileByPosition(position);
+        if (oldTile) this.disposePiece(oldTile);
         match3SetPieceType(this.grid, position, pieceType);
         if (!pieceType) return;
         const piece = this.createTile(position, pieceType);
@@ -165,22 +179,22 @@ export class Match3Board {
      * @param causedBySpecial If the pop was caused by special effect
      */
     public async popPiece(position: Match3Position, causedBySpecial = false) {
-        const piece = this.getPieceByPosition(position);
+        const tile = this.getTileByPosition(position);
         const type = match3GetPieceType(this.grid, position);
-        if (!type || !piece) return;
+        if (!type || !tile) return;
         const isSpecial = this.match3.special.isSpecial(type);
         const combo = this.match3.process.getProcessRound();
 
         // Set piece position in the grid to 0 and pop it out of the board
         match3SetPieceType(this.grid, position, 0);
-        const popData = { piece, type, combo, isSpecial, causedBySpecial };
+        const popData = { tile, type, combo, isSpecial, causedBySpecial };
         this.match3.stats.registerPop(popData);
         this.match3.onPop?.(popData);
-        if (this.tiles.includes(piece)) {
-            this.tiles.splice(this.tiles.indexOf(piece), 1);
+        if (this.tiles.includes(tile)) {
+            this.tiles.splice(this.tiles.indexOf(tile), 1);
         }
-        await piece.animatePop();
-        this.disposePiece(piece);
+        await tile.animatePop();
+        this.disposePiece(tile);
 
         // Trigger any specials related to this piece, if there is any
         await this.match3.special.trigger(type, position);
@@ -204,7 +218,7 @@ export class Match3Board {
      * @param position The grid position to look for
      * @returns
      */
-    public getPieceByPosition(position: Match3Position) {
+    public getTileByPosition(position: Match3Position) {
         for (const piece of this.tiles) {
             if (piece.row === position.row && piece.column === position.column) {
                 return piece;
@@ -257,6 +271,6 @@ export class Match3Board {
 
     /** Bring a piece in front of all others */
     public bringToFront(piece: Match3Tile) {
-        this.piecesContainer.addChild(piece);
+        this.tilesContainer.addChild(piece);
     }
 }
