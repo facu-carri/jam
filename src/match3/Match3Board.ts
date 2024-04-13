@@ -2,7 +2,7 @@ import { Container, Graphics } from 'pixi.js';
 import { pool } from '../utils/pool';
 import { Match3 } from './Match3';
 import { Match3Config, match3GetBlocks } from './Match3Config';
-import { Match3Piece } from './Match3Piece';
+import { Match3Tile } from './Match3Tile';
 import {
     Match3Position,
     match3SetPieceType,
@@ -24,7 +24,7 @@ export class Match3Board {
     /** The grid state, with only numbers */
     public grid: Match3Grid = [];
     /** All piece sprites currently being used in the grid */
-    public pieces: Match3Piece[] = [];
+    public tiles: Match3Tile[] = [];
     /** Mask all pieces inside board dimensions */
     public piecesMask: Graphics;
     /** A container for the pieces sprites */
@@ -88,7 +88,7 @@ export class Match3Board {
 
         // Fill up the visual board with piece sprites
         match3ForEach(this.grid, (gridPosition: Match3Position, type: Match3Type) => {
-            this.createPiece(gridPosition, type);
+            this.createTile(gridPosition, type);
         });
     }
 
@@ -96,12 +96,12 @@ export class Match3Board {
      * Dispose all pieces and clean up the board
      */
     public reset() {
-        let i = this.pieces.length;
+        let i = this.tiles.length;
         while (i--) {
-            const piece = this.pieces[i];
+            const piece = this.tiles[i];
             this.disposePiece(piece);
         }
-        this.pieces.length = 0;
+        this.tiles.length = 0;
     }
 
     /**
@@ -109,9 +109,9 @@ export class Match3Board {
      * @param position The grid position where the new piece will be attached
      * @param type The type of the nre piece
      */
-    public createPiece(position: Match3Position, pieceType: Match3Type) {
+    public createTile(position: Match3Position, pieceType: Match3Type) {
         const name = this.typesMap[pieceType];
-        const piece = pool.get(Match3Piece);
+        const piece = pool.get(Match3Tile);
         const viewPosition = this.getViewPositionByGridPosition(position);
         piece.onMove = (from, to) => this.match3.actions.actionMove(from, to);
         piece.onTap = (position) => this.match3.actions.actionTap(position);
@@ -126,7 +126,7 @@ export class Match3Board {
         piece.column = position.column;
         piece.x = viewPosition.x;
         piece.y = viewPosition.y;
-        this.pieces.push(piece);
+        //this.pieces.push(piece);
         this.piecesContainer.addChild(piece);
         return piece;
     }
@@ -135,9 +135,9 @@ export class Match3Board {
      * Dispose a piece, remving it from the board
      * @param piece Piece to be removed
      */
-    public disposePiece(piece: Match3Piece) {
-        if (this.pieces.includes(piece)) {
-            this.pieces.splice(this.pieces.indexOf(piece), 1);
+    public disposePiece(piece: Match3Tile) {
+        if (this.tiles.includes(piece)) {
+            this.tiles.splice(this.tiles.indexOf(piece), 1);
         }
         if (piece.parent) {
             piece.parent.removeChild(piece);
@@ -155,7 +155,7 @@ export class Match3Board {
         if (oldPiece) this.disposePiece(oldPiece);
         match3SetPieceType(this.grid, position, pieceType);
         if (!pieceType) return;
-        const piece = this.createPiece(position, pieceType);
+        const piece = this.createTile(position, pieceType);
         await piece.animateSpawn();
     }
 
@@ -176,8 +176,8 @@ export class Match3Board {
         const popData = { piece, type, combo, isSpecial, causedBySpecial };
         this.match3.stats.registerPop(popData);
         this.match3.onPop?.(popData);
-        if (this.pieces.includes(piece)) {
-            this.pieces.splice(this.pieces.indexOf(piece), 1);
+        if (this.tiles.includes(piece)) {
+            this.tiles.splice(this.tiles.indexOf(piece), 1);
         }
         await piece.animatePop();
         this.disposePiece(piece);
@@ -205,7 +205,7 @@ export class Match3Board {
      * @returns
      */
     public getPieceByPosition(position: Match3Position) {
-        for (const piece of this.pieces) {
+        for (const piece of this.tiles) {
             if (piece.row === position.row && piece.column === position.column) {
                 return piece;
             }
@@ -247,16 +247,16 @@ export class Match3Board {
 
     /** Pause all pieces animations */
     public pause() {
-        for (const piece of this.pieces) piece.pause();
+        for (const piece of this.tiles) piece.pause();
     }
 
     /** Resule all pieces animations */
     public resume() {
-        for (const piece of this.pieces) piece.resume();
+        for (const piece of this.tiles) piece.resume();
     }
 
     /** Bring a piece in front of all others */
-    public bringToFront(piece: Match3Piece) {
+    public bringToFront(piece: Match3Tile) {
         this.piecesContainer.addChild(piece);
     }
 }

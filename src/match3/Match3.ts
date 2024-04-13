@@ -2,7 +2,7 @@ import { Container } from 'pixi.js';
 import { Match3Actions } from './Match3Actions';
 import { Match3Board } from './Match3Board';
 import { Match3Config, match3GetConfig } from './Match3Config';
-import { Match3Piece } from './Match3Piece';
+import { Match3Tile } from './Match3Tile';
 import { Match3Process } from './Match3Process';
 import { Match3Special } from './Match3Special';
 import { Match3Stats } from './Match3Stats';
@@ -22,7 +22,7 @@ export interface Match3OnPopData {
     /** The type of the piece popped out */
     type: Match3Type;
     /** The piece sprite */
-    piece: Match3Piece;
+    tile: Match3Tile;
     /** Current combo level */
     combo: number;
     /** Tells if the given type is a special type */

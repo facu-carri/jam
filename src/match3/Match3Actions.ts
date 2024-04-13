@@ -1,5 +1,5 @@
 import { Match3 } from './Match3';
-import { Match3Piece } from './Match3Piece';
+import { Match3Piece } from './Match3Tile';
 import {
     Match3Position,
     match3GetPieceType,

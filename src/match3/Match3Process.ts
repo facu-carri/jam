@@ -75,7 +75,7 @@ export class Match3Process {
         this.processing = false;
         this.queue.clear();
         console.log('[Match3] Sequence rounds:', this.round);
-        console.log('[Match3] Board pieces:', this.match3.board.pieces.length);
+        console.log('[Match3] Board pieces:', this.match3.board.tiles.length);
         console.log('[Match3] Grid:\n' + match3GridToString(this.match3.board.grid));
         console.log('[Match3] ======= PROCESSING COMPLETE =======');
         this.match3.onProcessComplete?.();
@@ -177,7 +177,7 @@ export class Match3Process {
 
         for (const position of newPieces) {
             const pieceType = match3GetPieceType(this.match3.board.grid, position);
-            const piece = this.match3.board.createPiece(position, pieceType);
+            const piece = this.match3.board.createTile(position, pieceType);
 
             // Count pieces per column so new pieces can be stacked up accordingly
             if (!piecesPerColumn[piece.column]) piecesPerColumn[piece.column] = 0;

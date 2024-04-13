@@ -32,7 +32,7 @@ const easeSingleBounce = registerCustomEase(
  * They also have their own set of animations and they will be locked while playing them, to avoid
  * positioning conflicts.
  */
-export class Match3Piece extends Container {
+export class Match3Tile extends Container {
     /** The interactive area of the piece */
     private readonly area: Sprite;
     /** The actual image of the piece */
@@ -78,7 +78,6 @@ export class Match3Piece extends Container {
         this.addChild(this.area);
 
         this.area.on('pointerdown', this.onPointerDown);
-        this.area.on('pointermove', this.onPointerMove);
         this.area.on('pointerup', this.onPointerUp);
         this.area.on('pointerupoutside', this.onPointerUp);
         this.area.on('pointercancel', this.onPointerUp);
@@ -99,7 +98,6 @@ export class Match3Piece extends Container {
         this.visible = true;
         this.alpha = 1;
         this.type = opts.type;
-        this.name = opts.name;
         this.image.alpha = 1;
         this.scale.set(1);
         this.image.texture = Texture.from(opts.name);
@@ -123,46 +121,7 @@ export class Match3Piece extends Container {
         this.dragging = false;
         this.pressX = e.globalX;
         this.pressY = e.globalY;
-    };
-
-    /** Interaction mouse/touch move handler */
-    private onPointerMove = (e: FederatedPointerEvent) => {
-        if (!this.pressing || this.isLocked()) return;
-
-        const moveX = e.globalX - this.pressX;
-        const moveY = e.globalY - this.pressY;
-        const distanceX = Math.abs(moveX);
-        const distanceY = Math.abs(moveY);
-        const distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
-
-        if (distance > 10) {
-            this.dragging = true;
-            const from = { row: this.row, column: this.column };
-            const to = { row: this.row, column: this.column };
-
-            if (distanceX > distanceY) {
-                if (moveX < 0) {
-                    // Move left
-                    to.column -= 1;
-                    this.onMove?.(from, to);
-                } else {
-                    // Move right
-                    to.column += 1;
-                    this.onMove?.(from, to);
-                }
-            } else {
-                if (moveY < 0) {
-                    // Move up
-                    to.row -= 1;
-                    this.onMove?.(from, to);
-                } else {
-                    // Move down
-                    to.row += 1;
-                    this.onMove?.(from, to);
-                }
-            }
-            this.onPointerUp();
-        }
+        console.log('push down')
     };
 
     /** Interaction mouse/touch up handler */
