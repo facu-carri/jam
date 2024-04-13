@@ -3,12 +3,13 @@ import { i18n } from '../utils/i18n';
 import { Cloud } from './Cloud';
 import { Label } from './Label';
 import gsap from 'gsap';
+import { ContainerWrapper } from './Container';
 
 /**
  * Time's up animation, after gameplay fully finishes, and also leads the animated
  * transition to the Result screen
  */
-export class GameTimesUp extends Container {
+export class GameTimesUp extends ContainerWrapper {
     /** Inner container for animation */
     private container: Container;
     /** The animated cloud background */

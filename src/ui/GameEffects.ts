@@ -1,6 +1,6 @@
 import { Container } from 'pixi.js';
 import { Match3OnMatchData, Match3OnMoveData, Match3OnPopData } from '../match3/Match3';
-import { Match3Piece } from '../match3/Match3Piece';
+import { Match3Tile } from '../match3/Match3Tile';
 import { randomRange } from '../utils/random';
 import gsap from 'gsap';
 import { GameScreen } from '../screens/GameScreen';
@@ -61,15 +61,15 @@ export class GameEffects extends Container {
 
     /** Fired when a piece is popped out from the grid */
     public async onPop(data: Match3OnPopData) {
-        const position = this.toLocal(data.piece.getGlobalPosition());
+        const position = this.toLocal(data.tile.getGlobalPosition());
         this.playPopExplosion(position);
 
         if (!data.isSpecial) {
-            const position = this.toLocal(data.piece.getGlobalPosition());
-            const piece = pool.get(Match3Piece);
+            const position = this.toLocal(data.tile.getGlobalPosition());
+            const piece = pool.get(Match3Tile);
             piece.setup({
-                name: data.piece.name,
-                type: data.piece.type,
+                name: data.tile.name,
+                type: data.tile.type,
                 size: this.game.match3.board.tileSize,
                 interactive: false,
             });
@@ -92,7 +92,7 @@ export class GameEffects extends Container {
     }
 
     /** Make the piece fly to cauldron with a copy of the original piece created in its place */
-    public async playFlyToCauldron(piece: Match3Piece) {
+    public async playFlyToCauldron(piece: Match3Tile) {
         const x = this.game.cauldron.x + randomRange(-20, 20);
         const y = this.game.cauldron.y - 55;
         const to = { x, y };
@@ -137,12 +137,12 @@ export class GameEffects extends Container {
     }
 
     /** Explode piece out of the board, part of the play grid explosion animation */
-    private async playPieceExplosion(piece: Match3Piece) {
+    private async playPieceExplosion(piece: Match3Tile) {
         const position = this.toLocal(piece.getGlobalPosition());
         const x = position.x + piece.x * 2 + randomRange(-100, 100);
         const yUp = position.y + randomRange(-100, -200);
         const yDown = yUp + 600;
-        const animatedPiece = pool.get(Match3Piece);
+        const animatedPiece = pool.get(Match3Tile);
         const duration = randomRange(0.5, 0.8);
         gsap.killTweensOf(animatedPiece);
         gsap.killTweensOf(animatedPiece.scale);
@@ -173,8 +173,8 @@ export class GameEffects extends Container {
     public async playGridExplosion() {
         earthquake(this.game.pivot, 10);
         const animPromises: Promise<void>[] = [];
-        this.game.match3.board.pieces.forEach((piece) => {
-            animPromises.push(this.playPieceExplosion(piece));
+        this.game.match3.board.tiles.forEach((tile) => {
+            animPromises.push(this.playPieceExplosion(tile));
         });
         this.game.match3.board.piecesContainer.visible = false;
         await Promise.all(animPromises);

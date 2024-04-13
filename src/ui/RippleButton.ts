@@ -37,6 +37,11 @@ export class RippleButton extends FancyButton {
         this.onDown.connect(this.handleDown.bind(this));
     }
 
+    public resize(x: number, y: number) {
+        this.x = x
+        this.y = y
+    }
+
     private handleHover() {
         sfx.play('common/sfx-hover.wav');
         gsap.to(this.scale, { x: 1.2, y: 1.2, duration: 0.2, ease: 'back.out' });

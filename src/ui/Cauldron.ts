@@ -4,6 +4,7 @@ import { randomRange } from '../utils/random';
 import { registerCustomEase } from '../utils/animation';
 import { pool } from '../utils/pool';
 import { Spine } from '@pixi/spine-pixi';
+import { ContainerWrapper } from './Container';
 
 /** Custom ease curve for splash drops y animation */
 const easeDropJumpOut = registerCustomEase('M0,0,C0,0,0.07,-0.63,0.402,-0.422,0.83,-0.152,1,1,1,1');
@@ -12,7 +13,7 @@ const easeDropJumpOut = registerCustomEase('M0,0,C0,0,0.07,-0.63,0.402,-0.422,0.
  * Spine-animated cauldron, with some dynamic functionality, like
  * play splash animation and set up an inner sprite that follows up the spine animation.
  */
-export class Cauldron extends Container {
+export class Cauldron extends ContainerWrapper {
     /** Inner container for the cauldron */
     private container: Container;
     /** The optional cauldron shadow, displayed in game screen */

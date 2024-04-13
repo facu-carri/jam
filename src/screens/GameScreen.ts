@@ -22,6 +22,8 @@ import { GameOvertime } from '../ui/GameOvertime';
 import { waitFor } from '../utils/asyncUtils';
 import { match3GetConfig, Match3Mode } from '../match3/Match3Config';
 import { userStats } from '../utils/userStats';
+import { Nexus } from '../ui/Nexus';
+import { ContainerWrapper } from '../ui/Container';
 
 /** The screen tha holds the Match3 game */
 export class GameScreen extends Container {
@@ -32,7 +34,7 @@ export class GameScreen extends Container {
     /** Animated cauldron */
     public readonly cauldron: Cauldron;
     /** Inner container for the match3 */
-    public readonly gameContainer: Container;
+    public readonly gameContainer: ContainerWrapper;
     /** The gameplay timer display */
     public readonly timer: GameTimer;
     /** The game score display */
@@ -55,6 +57,8 @@ export class GameScreen extends Container {
     public readonly shelf?: Shelf;
     /** The special effects layer for the match3 */
     public readonly vfx?: GameEffects;
+
+    public readonly nexus: Nexus;
     /** Set to true when gameplay is finished */
     private finished = false;
 
@@ -75,7 +79,7 @@ export class GameScreen extends Container {
         this.settingsButton.onPress.connect(() => navigation.presentPopup(SettingsPopup));
         this.addChild(this.settingsButton);
 
-        this.gameContainer = new Container();
+        this.gameContainer = new ContainerWrapper()
         this.addChild(this.gameContainer);
 
         this.shelf = new Shelf();
@@ -119,6 +123,9 @@ export class GameScreen extends Container {
 
         this.timesUp = new GameTimesUp();
         this.addChild(this.timesUp);
+
+        this.nexus = new Nexus(true)
+        this.addChild(this.nexus)
     }
 
     /** Prepare the screen just before showing */
@@ -137,6 +144,7 @@ export class GameScreen extends Container {
         this.match3.setup(match3Config);
         this.pauseButton.hide(false);
         this.cauldron.hide(false);
+        this.nexus.hide(false)
         this.score.hide(false);
         gsap.killTweensOf(this.gameContainer.pivot);
         this.gameContainer.pivot.y = -navigation.height * 0.7;
@@ -175,26 +183,17 @@ export class GameScreen extends Container {
         const centerX = width * 0.5;
         const centerY = height * 0.5;
 
-        this.gameContainer.x = centerX;
-        this.gameContainer.y = div + this.match3.board.getHeight() * 0.5 + 20;
-        this.score.x = centerX;
-        this.score.y = 10;
-        this.comboMessage.x = centerX - 150;
-        this.comboMessage.y = div - 50;
-        this.comboLevel.x = centerX + 150;
-        this.comboLevel.y = div - 50;
-        this.cauldron.x = centerX;
-        this.cauldron.y = div - 60;
-        this.pauseButton.x = 30;
-        this.pauseButton.y = 30;
-        this.settingsButton.x = width - 30;
-        this.settingsButton.y = 30;
-        this.countdown.x = centerX;
-        this.countdown.y = centerY;
-        this.timesUp.x = centerX;
-        this.timesUp.y = centerY;
-        this.overtime.x = this.gameContainer.x;
-        this.overtime.y = this.gameContainer.y;
+        this.gameContainer.resize(centerX, div + this.match3.board.getHeight() * 0.5 + 20)
+        this.score.resize(centerX, 10)
+        this.comboMessage.resize(centerX - 150, div - 50)
+        this.comboLevel.resize(centerX + 150, div - 50)
+        this.cauldron.resize(centerX, div - 60)
+        this.pauseButton.resize(30, 30)
+        this.settingsButton.resize(width - 30, 30)
+        this.countdown.resize(centerX, centerY)
+        this.timesUp.resize(centerX, centerY)
+        this.overtime.resize(this.gameContainer.x, this.gameContainer.y)
+        this.nexus.resize(centerX, height*0.9)
     }
 
     /** Show screen with animations */
@@ -204,6 +203,7 @@ export class GameScreen extends Container {
         await this.countdown.show();
         await this.cauldron.show();
         await this.countdown.hide();
+        await this.nexus.show()
         this.score.show();
         this.pauseButton.show();
         this.match3.startPlaying();

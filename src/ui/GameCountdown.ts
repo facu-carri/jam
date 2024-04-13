@@ -6,6 +6,7 @@ import gsap from 'gsap';
 import { registerCustomEase } from '../utils/animation';
 import { waitFor } from '../utils/asyncUtils';
 import { sfx } from '../utils/audio';
+import { ContainerWrapper } from './Container';
 
 /** Custom ease curve for showing up countdown labels in a way that they slow down in the middle of the animation */
 const easeMidSlowMotion = registerCustomEase(
@@ -16,7 +17,7 @@ const easeMidSlowMotion = registerCustomEase(
  * The "Ready... GO!" message that shows up right before gameplay starts, that takes place of
  * a regular "3, 2, 1... GO!" animation, for speed.
  */
-export class GameCountdown extends Container {
+export class GameCountdown extends ContainerWrapper {
     /** Inner container for internal animations */
     private container: Container;
     /** The animated cloud background */

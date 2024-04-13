@@ -4,11 +4,12 @@ import { Label } from './Label';
 import gsap from 'gsap';
 import { throttle } from '../utils/throttle';
 import { sfx } from '../utils/audio';
+import { ContainerWrapper } from './Container';
 
 /**
  * The game score that shows during gameplay, with points animation
  */
-export class GameScore extends Container {
+export class GameScore extends ContainerWrapper {
     /** Inner container for animation */
     private container: Container;
     /** The animated cloud background */

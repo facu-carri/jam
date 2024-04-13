@@ -1,15 +1,16 @@
-import { Container, Sprite, Texture } from 'pixi.js';
+import { Sprite, Texture } from 'pixi.js';
 import { i18n } from '../utils/i18n';
 import { Label } from './Label';
 import gsap from 'gsap';
 import { app } from '../main';
 import { sfx } from '../utils/audio';
+import { ContainerWrapper } from './Container';
 
 /**
  * Shows up when the game is 5 seconds to finish, with a countdown 5 to 1,
  * then shows a "Finished" message while the grid takes its time to complete processing
  */
-export class GameOvertime extends Container {
+export class GameOvertime extends ContainerWrapper {
     /** Label for the seconds left */
     private labelNum: Label;
     /** Label for the final message */

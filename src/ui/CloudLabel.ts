@@ -2,6 +2,7 @@ import { Container } from 'pixi.js';
 import { Label } from './Label';
 import { Cloud } from './Cloud';
 import gsap from 'gsap';
+import { ContainerWrapper } from './Container';
 
 const defaultCloudLabelOptions = {
     color: 0x2c136c,
@@ -13,7 +14,7 @@ export type CloudLabelOptions = typeof defaultCloudLabelOptions;
 /**
  * Class that composes a Cloud and a Label, used in different places in this app,
  */
-export class CloudLabel extends Container {
+export class CloudLabel extends ContainerWrapper {
     /** Inner container for components, for animation purposes */
     private container: Container;
     /** The animated cloud background */
