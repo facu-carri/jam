@@ -1,5 +1,5 @@
 import { Match3 } from './Match3';
-import { Match3Piece } from './Match3Tile';
+import { Match3Tile } from './Match3Tile';
 import {
     Match3Position,
     match3GetPieceType,
@@ -47,8 +47,8 @@ export class Match3Actions {
         if (!this.match3.isPlaying()) return;
 
         // Check if there are pieces on each of the 2 positions, and if they are not locked
-        const pieceA = this.match3.board.getPieceByPosition(from);
-        const pieceB = this.match3.board.getPieceByPosition(to);
+        const pieceA = this.match3.board.getTileByPosition(from);
+        const pieceB = this.match3.board.getTileByPosition(to);
         if (!pieceA || !pieceB || pieceA.isLocked() || pieceB.isLocked()) return;
 
         // Check the grid types currently involved in the move
@@ -70,7 +70,7 @@ export class Match3Actions {
         if (!this.match3.isPlaying()) return;
 
         // Check the piece and type in the touched grid position
-        const piece = this.match3.board.getPieceByPosition(position);
+        const piece = this.match3.board.getTileByPosition(position);
         const type = this.match3.board.getTypeByPosition(position);
         if (!piece || !this.match3.special.isSpecial(type) || piece.isLocked()) return;
 
@@ -106,7 +106,7 @@ export class Match3Actions {
     }
 
     /** Attempt to swap two pieces positions in the board, and revert the movement if disallowed */
-    private async swapPieces(pieceA: Match3Piece, pieceB: Match3Piece) {
+    private async swapPieces(pieceA: Match3Tile, pieceB: Match3Tile) {
         // Get grid positions from pieces
         const positionA = pieceA.getGridPosition();
         const positionB = pieceB.getGridPosition();

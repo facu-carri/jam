@@ -76,7 +76,7 @@ export class Match3Tile extends Container {
 
         this.area = new Sprite(Texture.WHITE);
         this.area.anchor.set(0.5);
-        this.area.alpha = 0;
+        this.area.alpha = 1;
         this.addChild(this.area);
 
         this.area.on('pointerdown', this.onPointerDown);
@@ -105,13 +105,19 @@ export class Match3Tile extends Container {
         this.highlight.visible = opts.highlight;
         this.highlight.width = opts.size;
         this.highlight.height = opts.size;
-        this.highlight.alpha = 0.3;
-        this.area.tint = 'red'
         this.area.width = opts.size;
         this.area.height = opts.size;
         this.area.interactive = opts.interactive;
-        this.area.cursor = opts.blocked ? 'cursor' : 'pointer';
-        this.unlock();
+
+        this.area.alpha = opts.blocked ? 0.3 : 0
+        this.area.cursor = opts.blocked ? 'cursor' : 'pointer'
+        this.area.tint = opts.blocked ? 'black' : 'white'
+
+        if (this.blocked) {
+            this.area.removeAllListeners()
+        } else {
+            this.unlock();
+        }
     }
 
     /** Interaction mouse/touch down handler */
@@ -121,7 +127,7 @@ export class Match3Tile extends Container {
         this.dragging = false;
         this.pressX = e.globalX;
         this.pressY = e.globalY;
-        console.log('push down')
+        console.log('push down', this.row, this.column)
     };
 
     /** Interaction mouse/touch up handler */

@@ -124,7 +124,7 @@ export class Match3Board {
         const name = this.typesMap[pieceType];
         const tile = pool.get(Match3Tile);
         const viewPosition = this.getViewPositionByGridPosition(position);
-        const blocked = position.column > this.playerArea.columns || position.row > this.playerArea.rows
+        const blocked =  position.row <= this.playerArea.rows
 
         tile.onMove = (from, to) => this.match3.actions.actionMove(from, to);
         tile.onTap = (position) => this.match3.actions.actionTap(position);
